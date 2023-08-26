@@ -5,7 +5,7 @@ const port = process.env.PORT || 3000;
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   let ra = getRandomInt(100000);
-  const msg = `Hello Node 2(${ra})!\n`
+  const msg = `Hello Node 3(${ra})!\n`
   res.end(msg);
 });
 
