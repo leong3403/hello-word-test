@@ -9,7 +9,7 @@ const server = http.createServer((req, res) => {
   res.end(msg);
 });
 
-//test
+//test 2
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
