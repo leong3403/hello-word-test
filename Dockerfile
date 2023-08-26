@@ -1,5 +1,5 @@
 # use a node base image
-FROM node:16.3.1-alpine
+FROM node:16.3.1
 
 # set maintainer
 LABEL maintainer "xxxxx"
