@@ -1,6 +1,8 @@
 # use a node base image
 FROM node:16-alpine3.17
 
+COPY . .
+
 # set maintainer
 LABEL maintainer "xxxxx"
 
