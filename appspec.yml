@@ -5,14 +5,14 @@ files:
     destination: /home/ubuntu/my-app1
 hooks:
   BeforeInstall:
-    - location: scripts/codedeploy_before_install.sh
+    - location: codedeploy_before_install.sh
       timeout: 300
       runas: ubuntu
   AfterInstall:
-    - location: scripts/codedeploy_after_install.sh
+    - location: codedeploy_after_install.sh
       timeout: 300
       runas: ubuntu
   ApplicationStart:
-    - location: scripts/codedeploy_application_start.sh
+    - location: codedeploy_application_start.sh
       timeout: 300
       runas: ubuntu
