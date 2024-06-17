@@ -4,6 +4,10 @@ files:
   - source: /
     destination: /home/ubuntu/my-app1
 hooks:
+  ApplicationStop:
+    - location: codedeploy_application_stop.sh
+      timeout: 300
+      runas: ubuntu
   BeforeInstall:
     - location: codedeploy_before_install.sh
       timeout: 300
