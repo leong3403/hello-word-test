@@ -6,18 +6,18 @@ files:
 file_exists_behavior: OVERWRITE
 hooks:
   ApplicationStop:
-    - location: codedeploy_application_stop.sh
+    - location: Script/codedeploy_application_stop.sh
       timeout: 300
       runas: ubuntu
   BeforeInstall:
-    - location: codedeploy_before_install.sh
+    - location: Script/codedeploy_before_install.sh
       timeout: 300
       runas: ubuntu
   AfterInstall:
-    - location: codedeploy_after_install.sh
+    - location: Script/codedeploy_after_install.sh
       timeout: 300
       runas: ubuntu
   ApplicationStart:
-    - location: codedeploy_application_start.sh
+    - location: Script/codedeploy_application_start.sh
       timeout: 300
       runas: ubuntu
