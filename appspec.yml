@@ -5,10 +5,10 @@ files:
     destination: /home/ubuntu/my-app1
 file_exists_behavior: OVERWRITE
 hooks:
-  ApplicationStop:
-    - location: Script/codedeploy_application_stop.sh
-      timeout: 300
-      runas: ubuntu
+  #ApplicationStop:
+  #  - location: Script/codedeploy_application_stop.sh
+  #    timeout: 300
+  #    runas: ubuntu
   BeforeInstall:
     - location: Script/codedeploy_before_install.sh
       timeout: 300
