@@ -4,4 +4,4 @@
 #sudo apt-get install nodejs-legacy -y
 #sudo apt-get install npm  -y
 #sudo npm install pm2 -g
-#sudo rm -rf /home/ubuntu/my-app1
+sudo rm -rf /home/ubuntu/my-app1
