@@ -14,4 +14,4 @@ HEALTHCHECK --interval=5s \
 # tell docker what port to expose
 EXPOSE 3000
 
-CMD [ "node", "index.js" ]
+CMD [ "node", "app.js" ]
