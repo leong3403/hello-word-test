@@ -6,7 +6,7 @@ let serverid = getRandomInt(100);
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   let ra = getRandomInt(100000);
-  const msg = `Hello Node 20240702_5, by server ${serverid} , (${ra})!\n`
+  const msg = `Hello Node 20240703_1, by server ${serverid} , (${ra})!\n`
   res.end(msg);
 });
 
