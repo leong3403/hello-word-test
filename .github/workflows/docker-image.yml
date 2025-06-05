@@ -48,7 +48,7 @@ jobs:
           # SSH into EC2 and deploy
           ssh -T -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST}
             # Log in to Docker Hub
-            docker login -u ${secrets.DOCKERHUB_USERNAME} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
             # Stop and remove existing container (if any)
             docker stop my-app-container || true
