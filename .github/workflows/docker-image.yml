@@ -58,7 +58,7 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
 
             # Run the new container
-            docker run -d --name my-app-container -p 80:8080 ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
+            docker run -d --name my-app-container -p 80:8080 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
           EOF
 
           # Clean up
