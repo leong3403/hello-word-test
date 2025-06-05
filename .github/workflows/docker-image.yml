@@ -43,7 +43,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
           # Install SSH key
-          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          echo $SSH_PRIVATE_KEY > private_key.pem
           chmod 600 private_key.pem
 
           # SSH into EC2 and deploy
