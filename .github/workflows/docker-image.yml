@@ -55,7 +55,7 @@ jobs:
             docker rm my-app-container || true
 
             # Pull the latest image
-            docker pull ${DOCKERHUB_USERNAME}/my-app:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
 
             # Run the new container
             docker run -d --name my-app-container -p 80:8080 ${DOCKERHUB_USERNAME}/my-app:latest
