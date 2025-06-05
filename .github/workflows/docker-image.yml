@@ -32,7 +32,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/hello-word-test:latest
 
       # Step 5: Deploy to AWS EC2 via SSH
       - name: Deploy to EC2
@@ -40,7 +40,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
           # Install SSH key
           echo "$SSH_PRIVATE_KEY" > private_key.pem
@@ -49,17 +49,17 @@ jobs:
           # SSH into EC2 and deploy
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} << 'EOF'
             # Log in to Docker Hub
-            docker login -u ${DOCKER_USERNAME} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker login -u ${DOCKERHUB_USERNAME} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
             # Stop and remove existing container (if any)
             docker stop my-app-container || true
             docker rm my-app-container || true
 
             # Pull the latest image
-            docker pull ${DOCKER_USERNAME}/my-app:latest
+            docker pull ${DOCKERHUB_USERNAME}/my-app:latest
 
             # Run the new container
-            docker run -d --name my-app-container -p 80:8080 ${DOCKER_USERNAME}/my-app:latest
+            docker run -d --name my-app-container -p 80:8080 ${DOCKERHUB_USERNAME}/my-app:latest
           EOF
 
           # Clean up
