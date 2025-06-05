@@ -32,7 +32,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/hello-word-test:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
 
       # Step 5: Deploy to AWS EC2 via SSH
       - name: Deploy to EC2
