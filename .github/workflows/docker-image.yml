@@ -46,19 +46,19 @@ jobs:
           chmod 600 private_key.pem
 
           # SSH into EC2 and deploy
-          ssh -T -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST}
-            # Log in to Docker Hub
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-
-            # Stop and remove existing container (if any)
+          ssh -v -T -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} << 'EOF'
+            set -e  # Exit on error
+            echo "Logging in to Docker Hub"
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} || { echo "Docker login failed"; exit 1; }
+            echo "Stopping existing container"
             docker stop my-app-container || true
             docker rm my-app-container || true
-
-            # Pull the latest image
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
-
-            # Run the new container
-            docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+            echo "Pulling latest image"
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest || { echo "Docker pull failed"; exit 1; }
+            echo "Running new container"
+            docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest || { echo "Docker run failed"; exit 1; }
+            echo "Deployment complete"
+          EOF
 
           # Clean up
           rm private_key.pem
