@@ -6,19 +6,17 @@ on:
       environment:
         description: 'Deployment environment'
         required: true
-        type: choice
-        options:
-          - UAT
-          - PRD
-        default: 'UAT'
 
 jobs:
   deploy:
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ 
+        contains(github.ref, 'matser/') && 'PRD' ||
+        contains(github.ref, 'UAT') && 'UAT'}}
     runs-on: ubuntu-latest
     env:
       EC2_HOST: ${{ vars.EC2_HOST }}
       EC2_USER: ${{ vars.EC2_USER }}
+
 
     steps:
 
