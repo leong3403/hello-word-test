@@ -61,7 +61,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ DEPLOY_ENV }}-${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ env.DEPLOY_ENV }}-${{ github.sha }}
 
       # Step 5: Deploy to EC2 via SSH
       - name: Deploy to EC2
