@@ -1,16 +1,11 @@
-name: Deploy to AWS EC2
+name: Deploy to AWS EC2 UAT
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment (e.g., staging, production)'
-        required: true
-        default: 'staging'
 jobs:
   deploy:
+    environment: UAT
     runs-on: ubuntu-latest
-
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout code
@@ -34,15 +29,17 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:UAT-latest
 
       # Step 5: Deploy to AWS EC2 via SSH
       - name: Deploy to EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_HOST: ${{ vars.EC2_HOST }}
+          EC2_USER: ${{ vars.EC2_USER }}
         run: |
+          echo "EC2_HOST: $EC2_HOST"
+          echo "EC2_USER: $EC2_USER"
           # Install SSH key
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
@@ -56,9 +53,9 @@ jobs:
             sudo docker stop my-app-container || true
             sudo docker rm my-app-container || true
             echo "Pulling latest image"
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest || { echo "Docker pull failed"; exit 1; }
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:UAT-latest || { echo "Docker pull failed"; exit 1; }
             echo "Running new container"
-            sudo docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest || { echo "Docker run failed"; exit 1; }
+            sudo docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:UAT-latest || { echo "Docker run failed"; exit 1; }
             echo "Deployment complete"
           EOF
 
