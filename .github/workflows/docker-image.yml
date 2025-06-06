@@ -2,20 +2,32 @@ name: Deploy to AWS EC2
 
 on:
   workflow_dispatch:
-    inputs:
 jobs:
+
+
+  determine-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.mapping.outputs.environment }}
+    steps:
+      - name: Branch to Environment Mapping
+        id: mapping
+        run: |
+          if [[ $GITHUB_REF == refs/heads/master* ]]; then
+            echo "environment=PRD" >> $GITHUB_OUTPUT
+          elif [[ $GITHUB_REF == refs/heads/UAT* ]]; then
+            echo "environment=UAT" >> $GITHUB_OUTPUT
+          else
+            echo "environment=UAT" >> $GITHUB_OUTPUT
+          fi
+          
   deploy:
-    environment: ${{ 
-        contains(github.ref, 'matser/') && 'PRD' ||
-        contains(github.ref, 'UAT') && 'UAT'}}
     runs-on: ubuntu-latest
     env:
       EC2_HOST: ${{ vars.EC2_HOST }}
       EC2_USER: ${{ vars.EC2_USER }}
 
-
     steps:
-
     # Step 0: Log EC2_HOST and EC2_USER
       - name: Log deployment variables
         run: |
