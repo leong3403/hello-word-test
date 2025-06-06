@@ -3,42 +3,10 @@ name: Deploy to AWS EC2
 on:
   workflow_dispatch:
 jobs:
-
-
-  determine-environment:
-    runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.mapping.outputs.environment }}
-    steps:
-      - name: Branch to Environment Mapping
-        id: mapping
-        run: |
-          echo "GITHUB_REF: $GITHUB_REF"
-          if [[ $GITHUB_REF == refs/heads/main ]]; then
-            echo "environment=PRD" >> $GITHUB_OUTPUT
-          elif [[ $GITHUB_REF == refs/heads/UAT ]]; then
-            echo "environment=UAT" >> $GITHUB_OUTPUT
-          else
-            echo "environment=DEV" >> $GITHUB_OUTPUT
-          fi
-          
   deploy:
-    needs: determine-environment
+    environment: PRD
     runs-on: ubuntu-latest
-    environment: ${{ needs.determine-environment.outputs.environment }}
-    env:
-      DEPLOY_ENV : ${{ needs.determine-environment.outputs.environment }}
-      EC2_HOST: ${{ vars.EC2_HOST }}
-      EC2_USER: ${{ vars.EC2_USER }}
-
     steps:
-    # Step 0: Log EC2_HOST and EC2_USER
-      - name: Log deployment variables
-        run: |
-          echo "DEPLOY_ENV: $DEPLOY_ENV"
-          echo "EC2_HOST: $EC2_HOST"
-          echo "EC2_USER: $EC2_USER"
-      
       # Step 1: Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,7 +15,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 3: Log in to Docker Hub
+      # Step 3: Log in to Docker Hub (if using a private registry)
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -61,30 +29,31 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ env.DEPLOY_ENV }}-${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
 
-      # Step 5: Deploy to EC2 via SSH
+      # Step 5: Deploy to AWS EC2 via SSH
       - name: Deploy to EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
         run: |
           # Install SSH key
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
 
           # SSH into EC2 and deploy
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -v -T -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} << 'EOF'
             set -e  # Exit on error
-            echo "MYSERVER: $MYSERVER"
+            echo "Logging in to Docker Hub"
+            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} || { echo "Docker login failed"; exit 1; }
             echo "Stopping existing container"
-            sudo docker stop my-app-container || { echo "Failed to stop container"; exit 1; }
-            sudo docker rm my-app-container || { echo "Failed to remove container"; exit 1; }
+            sudo docker stop my-app-container || true
+            sudo docker rm my-app-container || true
             echo "Pulling latest image"
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{DEPLOY_ENV}}-${{ github.sha }} || { echo "Docker pull failed"; exit 1; }
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest || { echo "Docker pull failed"; exit 1; }
             echo "Running new container"
-            sudo docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.event.inputs.environment }}-${{ github.sha }} || { echo "Docker run failed"; exit 1; }
-            echo "Cleaning up unused images"
-            sudo docker image prune -f
+            sudo docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest || { echo "Docker run failed"; exit 1; }
             echo "Deployment complete"
           EOF
 
