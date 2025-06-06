@@ -80,7 +80,7 @@ jobs:
             sudo docker stop my-app-container || { echo "Failed to stop container"; exit 1; }
             sudo docker rm my-app-container || { echo "Failed to remove container"; exit 1; }
             echo "Pulling latest image"
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:$DEPLOY_ENV-${{ github.sha }} || { echo "Docker pull failed"; exit 1; }
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${DEPLOY_ENV}-${{ github.sha }} || { echo "Docker pull failed"; exit 1; }
             echo "Running new container"
             sudo docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.event.inputs.environment }}-${{ github.sha }} || { echo "Docker run failed"; exit 1; }
             echo "Cleaning up unused images"
