@@ -29,7 +29,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:PRD-latest
 
       # Step 5: Deploy to AWS EC2 via SSH
       - name: Deploy to EC2
@@ -51,9 +51,9 @@ jobs:
             sudo docker stop my-app-container || true
             sudo docker rm my-app-container || true
             echo "Pulling latest image"
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest || { echo "Docker pull failed"; exit 1; }
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/myapp:PRD-latest || { echo "Docker pull failed"; exit 1; }
             echo "Running new container"
-            sudo docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest || { echo "Docker run failed"; exit 1; }
+            sudo docker run -d --name my-app-container -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:PRD-latest || { echo "Docker run failed"; exit 1; }
             echo "Deployment complete"
           EOF
 
