@@ -8,9 +8,9 @@ on:
         required: true
         type: choice
         options:
-          - DEV
+          - UAT
           - PRD
-        default: 'DEV'
+        default: 'UAT'
 
 jobs:
   deploy:
