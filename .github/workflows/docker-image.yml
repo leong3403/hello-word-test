@@ -25,6 +25,7 @@ jobs:
   deploy:
     needs: determine-environment
     runs-on: ubuntu-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
     env:
       EC2_HOST: ${{ vars.EC2_HOST }}
       EC2_USER: ${{ vars.EC2_USER }}
