@@ -17,8 +17,8 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     env:
-      EC2_HOST: ${{ inputs.EC2_HOST }}
-      EC2_USER: ${{ inputs.EC2_USER }}
+      EC2_HOST: ${{ vars.input.s.EC2_HOST }}
+      EC2_USER: ${{ vars.inputs.EC2_USER }}
 
     steps:
 
