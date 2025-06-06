@@ -17,8 +17,8 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     env:
-      EC2_HOST: ${{ env.EC2_HOST }}
-      EC2_USER: ${{ env.EC2_USER'}}
+      EC2_HOST: ${{ github.env.EC2_HOST }}
+      EC2_USER: ${{ github.env.EC2_USER'}}
 
     steps:
       # Step 1: Checkout the repository code
