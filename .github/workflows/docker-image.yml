@@ -13,6 +13,7 @@ jobs:
       - name: Branch to Environment Mapping
         id: mapping
         run: |
+          echo "GITHUB_REF: $GITHUB_REF"
           if [[ $GITHUB_REF == refs/heads/master* ]]; then
             echo "environment=PRD" >> $GITHUB_OUTPUT
           elif [[ $GITHUB_REF == refs/heads/UAT* ]]; then
