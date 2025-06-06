@@ -34,7 +34,7 @@ jobs:
     # Step 0: Log EC2_HOST and EC2_USER
       - name: Log deployment variables
         run: |
-          echo "Deployment variables for ${{ github.event.inputs.environment }} environment:"
+          echo "Deployment variables for ${{ needs.determine-environment.outputs.environment }} environment:"
           echo "EC2_HOST: $EC2_HOST"
           echo "EC2_USER: $EC2_USER"
       
