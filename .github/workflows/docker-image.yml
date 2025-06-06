@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment (e.g., staging, production)'
+        description: 'Deployment environment'
         required: true
-        default: 'staging'
+        type: choice
+        options:
+          - DEV
+          - PRD
+        default: 'DEV'
 
 jobs:
   deploy:
