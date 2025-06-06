@@ -14,7 +14,7 @@ jobs:
         id: mapping
         run: |
           echo "GITHUB_REF: $GITHUB_REF"
-          if [[ $GITHUB_REF == refs/heads/master* ]]; then
+          if [[ $GITHUB_REF == refs/heads/main* ]]; then
             echo "environment=PRD" >> $GITHUB_OUTPUT
           elif [[ $GITHUB_REF == refs/heads/UAT* ]]; then
             echo "environment=UAT" >> $GITHUB_OUTPUT
