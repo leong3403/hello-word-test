@@ -14,15 +14,16 @@ jobs:
         id: mapping
         run: |
           echo "GITHUB_REF: $GITHUB_REF"
-          if [[ $GITHUB_REF == refs/heads/main* ]]; then
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
             echo "environment=PRD" >> $GITHUB_OUTPUT
-          elif [[ $GITHUB_REF == refs/heads/UAT* ]]; then
+          elif [[ $GITHUB_REF == refs/heads/UAT ]]; then
             echo "environment=UAT" >> $GITHUB_OUTPUT
           else
-            echo "environment=UAT" >> $GITHUB_OUTPUT
+            echo "environment=DEV" >> $GITHUB_OUTPUT
           fi
           
   deploy:
+    needs: determine-environment
     runs-on: ubuntu-latest
     env:
       EC2_HOST: ${{ vars.EC2_HOST }}
