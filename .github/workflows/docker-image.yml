@@ -3,10 +3,6 @@ name: Deploy to AWS EC2
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Deployment environment'
-        required: true
-
 jobs:
   deploy:
     environment: ${{ 
