@@ -61,7 +61,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:$DEPLOY_ENV-${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${DEPLOY_ENV}-${{ github.sha }}
 
       # Step 5: Deploy to EC2 via SSH
       - name: Deploy to EC2
@@ -73,7 +73,7 @@ jobs:
           chmod 600 private_key.pem
 
           # SSH into EC2 and deploy
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${DEPLOY_ENV}@${EC2_HOST} << 'EOF'
             set -e  # Exit on error
             echo "MYSERVER: $MYSERVER"
             echo "Stopping existing container"
