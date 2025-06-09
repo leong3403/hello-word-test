@@ -4,10 +4,20 @@ on:
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
+
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
     steps:
+
+      - name: Set environment variable
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "BUILD_TYPE=PRD" >> $GITHUB_ENV
+          else if [[ "${{ github.ref_name }}" == "UAT" ]]; then
+            echo "BUILD_TYPE=UAT" >> $GITHUB_ENV
+          fi
+        
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -36,12 +46,12 @@ jobs:
             .github/docker-image-tag.txt
           retention-days: 1
         #run: |
-        #  echo "${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.ref_name }}-latest" > .github/docker-image-tag.txt
+        #  echo "${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ env.BUILD_TYPE }}-latest" > .github/docker-image-tag.txt
 
   deploy-uat:
     name: Deploy to UAT
     needs: build
-    if: github.ref == 'refs/heads/uat'
+    if: ${{ env.BUILD_TYPE == 'UAT' }}
     uses: ./.github/workflows/deploy.yml
     with:
       target-env: UAT
@@ -55,7 +65,7 @@ jobs:
   deploy-prd:
     name: Deploy to PRD
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: ${{ env.BUILD_TYPE == 'PRD' }}
     uses: ./.github/workflows/deploy.yml
     with:
       target-env: PRD
