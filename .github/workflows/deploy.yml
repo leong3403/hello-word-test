@@ -1,0 +1,71 @@
+name: Reusable Deployment Workflow
+on:
+  workflow_call:
+    inputs:
+      target-env:
+        description: 'Target environment (UAT or PRD)'
+        required: true
+        type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+      SSH_PRIVATE_KEY:
+        required: true
+      EC2_HOST:
+        required: true
+      EC2_USER:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.target-env }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target-env }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Docker image tag
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image-tag
+          path: .github/
+
+      - name: Read Docker image tag
+        id: image
+        run: |
+          IMAGE_TAG=$(cat .github/docker-image-tag.txt)
+          echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Deploy to EC2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          echo "Deploying to ${{ inputs.target-env }}"
+          echo "EC2_HOST: $EC2_HOST"
+          echo "EC2_USER: $EC2_USER"
+          # Install SSH key
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+
+          # SSH into EC2 and deploy
+          ssh -v -T -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} << 'EOF'
+            set -e  # Exit on error
+            echo "Logging in to Docker Hub"
+            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} || { echo "Docker login failed"; exit 1; }
+            echo "Stopping existing container"
+            sudo docker stop my-app-container-${{ inputs.target-env }} || true
+            sudo docker rm my-app-container-${{ inputs.target-env }} || true
+            echo "Pulling latest image"
+            sudo docker pull ${{ steps.image.outputs.image-tag }} || { echo "Docker pull failed"; exit 1; }
+            echo "Running new container"
+            sudo docker run -d --name my-app-container-${{ inputs.target-env }} -p 80:3000 ${{ steps.image.outputs.image-tag }} || { echo "Docker run failed"; exit 1; }
+            echo "Deployment complete"
+          EOF
+
+          # Clean up
+          rm private_key.pem
