@@ -1,10 +1,7 @@
 name: Build and Deploy to UAT and PRD
 on:
-  push:
   workflow_dispatch:  # Allows manual triggering
-
 jobs:
-
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
