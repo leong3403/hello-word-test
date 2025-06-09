@@ -1,9 +1,6 @@
 name: Build and Deploy to UAT and PRD
 on:
   push:
-    branches:
-      - uat  # Triggers UAT deployment
-      - main     # Triggers PRD deployment
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
