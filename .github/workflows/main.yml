@@ -43,16 +43,19 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ env.BUILD_TYPE }}-latest
 
+      - name: Create Docker image tag file
+        run: |
+          mkdir -p .github
+          echo "${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ env.BUILD_TYPE }}-latest" > .github/docker-image-tag.txt
+
       - name: Upload Docker image tag
         uses: actions/upload-artifact@v4
         with:
           name: docker-image-tag
-          path: |
-            .github/docker-image-tag.txt
+          path: .github/docker-image-tag.txt
           retention-days: 1
-        #run: |
-        #  echo "${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ env.BUILD_TYPE }}-latest" > .github/docker-image-tag.txt
 
+          
   deploy-uat:
     name: Deploy to UAT
     needs: build
