@@ -2,7 +2,7 @@ name: Build and Deploy to UAT and PRD
 on:
   push:
     branches:
-      - develop  # Triggers UAT deployment
+      - uat  # Triggers UAT deployment
       - main     # Triggers PRD deployment
   workflow_dispatch:  # Allows manual triggering
 
@@ -44,7 +44,7 @@ jobs:
   deploy-uat:
     name: Deploy to UAT
     needs: build
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/uat'
     uses: ./.github/workflows/deploy.yml
     with:
       target-env: UAT
@@ -52,8 +52,8 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       SSH_PRIVATE_KEY: ${{ secrets.UAT_SSH_PRIVATE_KEY }}
-      EC2_HOST: ${{ vars.UAT_EC2_HOST }}
-      EC2_USER: ${{ vars.UAT_EC2_USER }}
+      EC2_HOST: ${{ vars.EC2_HOST }}
+      EC2_USER: ${{ vars.EC2_USER }}
 
   deploy-prd:
     name: Deploy to PRD
@@ -66,5 +66,5 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       SSH_PRIVATE_KEY: ${{ secrets.PRD_SSH_PRIVATE_KEY }}
-      EC2_HOST: ${{ vars.PRD_EC2_HOST }}
-      EC2_USER: ${{ vars.PRD_EC2_USER }}
+      EC2_HOST: ${{ vars.EC2_HOST }}
+      EC2_USER: ${{ vars.EC2_USER }}
