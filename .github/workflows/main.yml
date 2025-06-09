@@ -11,11 +11,14 @@ jobs:
     steps:
 
       - name: Set environment variable
+        id: set_build_type  # Add step ID for outputs
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
             echo "BUILD_TYPE=PRD" >> $GITHUB_ENV
-          else if [[ "${{ github.ref_name }}" == "UAT" ]]; then
+            echo "build_type=PRD" >> $GITHUB_OUTPUT  # Set output
+          elif [[ "${{ github.ref_name }}" == "UAT" ]]; then
             echo "BUILD_TYPE=UAT" >> $GITHUB_ENV
+            echo "build_type=UAT" >> $GITHUB_OUTPUT  # Set output
           fi
         
       - name: Checkout code
@@ -51,7 +54,7 @@ jobs:
   deploy-uat:
     name: Deploy to UAT
     needs: build
-    if: ${{ env.BUILD_TYPE == 'UAT' }}
+    if: ${{ needs.build.outputs.build_type == 'UAT' }}  # Use job output
     uses: ./.github/workflows/deploy.yml
     with:
       target-env: UAT
@@ -65,7 +68,7 @@ jobs:
   deploy-prd:
     name: Deploy to PRD
     needs: build
-    if: ${{ env.BUILD_TYPE == 'PRD' }}
+    if: ${{ needs.build.outputs.build_type == 'PRD' }}  # Use job output
     uses: ./.github/workflows/deploy.yml
     with:
       target-env: PRD
