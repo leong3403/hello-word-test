@@ -8,6 +8,8 @@ jobs:
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
+    outputs:
+      build_type: ${{ steps.set_build_type.outputs.build_type }}  # Define output
     steps:
 
       - name: Set environment variable
