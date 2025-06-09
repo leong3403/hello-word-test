@@ -39,7 +39,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.ref_name }}-latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ env.BUILD_TYPE }}-latest
 
       - name: Upload Docker image tag
         uses: actions/upload-artifact@v4
