@@ -15,7 +15,7 @@ jobs:
           if [[ "${{ github.ref_name }}" == "main" ]]; then
             echo "BUILD_TYPE=PRD" >> $GITHUB_ENV
             echo "build_type=PRD" >> $GITHUB_OUTPUT  # Set output
-          elif [[ "${{ github.ref_name }}" == "UAT" ]]; then
+          elif [[ "${{ github.ref_name }}" == "uat" ]]; then
             echo "BUILD_TYPE=UAT" >> $GITHUB_ENV
             echo "build_type=UAT" >> $GITHUB_OUTPUT  # Set output
           fi
