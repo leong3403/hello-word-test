@@ -35,8 +35,8 @@ jobs:
           path: |
             .github/docker-image-tag.txt
           retention-days: 1
-        run: |
-          echo "${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.ref_name }}-latest" > .github/docker-image-tag.txt
+        #run: |
+        #  echo "${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.ref_name }}-latest" > .github/docker-image-tag.txt
 
   deploy-uat:
     name: Deploy to UAT
